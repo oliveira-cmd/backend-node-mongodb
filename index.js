@@ -4,6 +4,7 @@ const {createTokenMiddleware, headersVerificationMiddleware} = require("./middle
 const {saveUser, findUserById, findAllUsers, updateUserById, deleteUserById} = require('./controller/User');
 const {saveProduct, getProductById, getAllProduct, updateProductById, deleteProductById} = require('./controller/Product');
 const {saveStock, getStockById, getAllStock, updateStockById, deleteStockById} = require('./controller/Stock');
+const {saveCustomer, findCustomerById, findAllCustomers, updateCustomerById, deleteCustomerById} = require('./controller/Customer');
 app.use(express.json()); // Para JSON
 const {runDatabase} = require('./db/index');
 runDatabase();
@@ -106,4 +107,34 @@ app.delete('/stock/:id', async (req, res) => {
     res.status(201).json(stock)
 });
 
+app.post('/customer', async (req, res) => {
+    const {firstName, lastName, email, password,cellphone, typePerson, cpf,postcode,address,numberHome} = req.body;
+    const customer = await saveCustomer({firstName, lastName, email, password,cellphone, typePerson, cpf,postcode,address,numberHome});
+    res.status(201).json(customer);
+});
+
+app.get('/customer/:id', async(req, res) =>{
+    const id = req.params.id;
+    const customer = await findCustomerById(id);
+    res.status(201).json(customer);
+});
+
+app.get('/customer', async (req, res) => {
+    const customer = await findAllCustomers();
+    res.status(201).json(customer);
+});
+
+
+app.put('/customer/:id', async (req, res) => {
+    const id = req.params.id;
+    const {firstName, lastName, email, password,cellphone, typePerson, cpf,postcode,address,numberHome} = req.body;
+    const customer = await updateCustomerById(id,{firstName, lastName, email, password,cellphone, typePerson, cpf,postcode,address,numberHome});
+    res.status(201).json(customer);
+});
+
+app.delete('/customer/:id', async (req, res) => {
+    const id = req.params.id;
+    const customer = await deleteCustomerById(id);
+    res.status(201).json(customer)
+});
 app.listen(3000);
