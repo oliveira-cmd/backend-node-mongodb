@@ -5,6 +5,9 @@ const {saveUser, findUserById, findAllUsers, updateUserById, deleteUserById} = r
 const {saveProduct, getProductById, getAllProduct, updateProductById, deleteProductById} = require('./controller/Product');
 const {saveStock, getStockById, getAllStock, updateStockById, deleteStockById} = require('./controller/Stock');
 const {saveCustomer, findCustomerById, findAllCustomers, updateCustomerById, deleteCustomerById} = require('./controller/Customer');
+const {saveOrderStatus} = require('./controller/OrderStatus');
+const {saveOrder, getOrderById, getAllOrders,updateOrderById} = require('./controller/Order');
+const {saveOrderProducts, getAllProductIds} = require('./controller/OrderProducts');
 app.use(express.json()); // Para JSON
 const {runDatabase} = require('./db/index');
 runDatabase();
@@ -137,4 +140,54 @@ app.delete('/customer/:id', async (req, res) => {
     const customer = await deleteCustomerById(id);
     res.status(201).json(customer)
 });
+
+app.post('/order_status', async (req, res) =>{
+    const {name} = req.body;
+    const orderStatus = await saveOrderStatus({name})
+    res.status(201).json(orderStatus)
+});
+
+app.post('/order', async (req, res) => {
+    const {nameCustomer,emailCustomer,cellphoneCustomer,cpf, postcode,address,numberHome, valueDelivery,valueTotal,idOrderStatus,numberCard,pixCode,billetCode} = req.body;
+
+    const order = await saveOrder({nameCustomer,emailCustomer,cellphoneCustomer,cpf, postcode,address,numberHome, valueDelivery,valueTotal,idOrderStatus,numberCard,pixCode,billetCode});
+
+    res.status(201).json(order)
+});
+
+app.get('/order/:id', async (req, res) =>{
+    const id = req.params.id;
+    
+    const order = await getOrderById(id);
+    res.status(201).json(order)
+});
+
+app.get('/order', async (req, res) => {
+    const order = await getAllOrders();
+    res.status(201).json(order)
+});
+
+app.put('/order/:id', async (req, res) => {
+    const id = req.params.id;
+    const {nameCustomer,emailCustomer,cellphoneCustomer,cpf, postcode,address,numberHome, valueDelivery,valueTotal,idOrderStatus,numberCard,pixCode,billetCode} = req.body
+
+    const order = await updateOrderById(id, {nameCustomer,emailCustomer,cellphoneCustomer,cpf, postcode,address,numberHome, valueDelivery,valueTotal,idOrderStatus,numberCard,pixCode,billetCode});
+
+    res.status(201).json(order)
+});
+
+app.post('/order_products', async (req, res) => {
+    const {orderId, productIds} = req.body;
+    const orderProducts = saveOrderProducts({orderId, productIds});
+    res.status(201).json(orderProducts)
+
+});
+
+app.get('/order_products/:order_id', async (req, res) => {
+    const order_id = req.params.order_id;
+    const products = getAllProductIds(order_id);
+    res.status(201).json(products)
+
+})
+
 app.listen(3000);
