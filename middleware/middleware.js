@@ -3,7 +3,7 @@ require('dotenv').config();
 
 function createTokenMiddleware(data){
     try{
-        let token = jwt.sign({exp: Math.floor(Date.now() / 1000), data }, process.env.PRIVATE_KEY); // token valido por 1h
+        let token = jwt.sign({exp: Math.floor(Date.now() / 1000 * (60*60)), data }, process.env.PRIVATE_KEY); // token valido por 1h
         return token;
     } catch(e){
         console.log(e)
