@@ -3,6 +3,7 @@ const app = express();
 const {createTokenMiddleware, headersVerificationMiddleware} = require("./middleware/middleware");
 const {saveUser, findUserById, findAllUsers, updateUserById, deleteUserById} = require('./controller/User');
 const {saveProduct, getProductById, getAllProduct, updateProductById, deleteProductById} = require('./controller/Product');
+const {saveStock, getStockById, getAllStock, updateStockById, deleteStockById} = require('./controller/Stock');
 app.use(express.json()); // Para JSON
 const {runDatabase} = require('./db/index');
 runDatabase();
@@ -72,6 +73,37 @@ app.delete('/product/:id', async (req, res) => {
     const id = req.params.id;
     const product = await deleteProductById(id);
     res.status(201).json(product);
-})
+});
+
+app.post('/stock', async (req, res) => {
+    const {product_sku, name, qtde, userLog} = req.body;
+    const stock = await saveStock({product_sku,name, qtde, userLog});
+    res.status(201).json(stock);
+});
+
+app.get('/stock/:id', async(req, res) =>{
+    const id = req.params.id;
+    const stock = await getStockById(id);
+    res.status(201).json(stock);
+});
+
+app.get('/stock', async (req, res) => {
+    const stock = await getAllStock();
+    res.status(201).json(stock);
+});
+
+
+app.put('/stock/:id', async (req, res) => {
+    const id = req.params.id;
+    const {qtde, userLog} = req.body;
+    const stock = await updateStockById(id,{qtde, userLog});
+    res.status(201).json(stock);
+});
+
+app.delete('/stock/:id', async (req, res) => {
+    const id = req.params.id;
+    const stock = await deleteStockById(id);
+    res.status(201).json(stock)
+});
 
 app.listen(3000);
