@@ -1,9 +1,9 @@
 const User = require('../model/user/user');
 
-function saveUser(data){
+async function saveUser(data){
     try {
         const user = new User(data);
-        const verifyUserExist = User.findOne({email: data.email});
+        const verifyUserExist = await User.findOne({email: data.email});
         if(!verifyUserExist){
             user.save();
             return user;
