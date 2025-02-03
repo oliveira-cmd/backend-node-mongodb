@@ -1,4 +1,6 @@
 const mongoose = require("mongoose");
+const encrypt = require('mongoose-encryption');
+require('dotenv').config();
 
 const CustomerSchema = new mongoose.Schema({
     firstName: {type:String,required:true},
@@ -12,6 +14,11 @@ const CustomerSchema = new mongoose.Schema({
     address: {type: String, required:true},
     numberHome: {type: String, required:true},
 }, {timestamps:true});
+
+CustomerSchema.plugin(encrypt, {
+    secret: process.env.PRIVATE_KEY,
+    encryptedFields:['password', 'cpf'],
+});
 
 const Customer = mongoose.model("Customer", CustomerSchema);
 
